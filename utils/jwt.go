@@ -31,7 +31,6 @@ func GenerateToken(userID int, role string) (string, error) {
 	return token.SignedString(jwtKey)
 }
 
-// VerifyToken untuk middleware
 func VerifyToken(tokenStr string) (*Claims, error) {
 	claims := &Claims{}
 

@@ -1,7 +1,8 @@
 package routers
 
 import (
-	"warehousemanagement/controllers"
+	"warehousemanagement/config"
+	controller "warehousemanagement/controller"
 	"warehousemanagement/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -10,22 +11,23 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.POST("/api/auth/login", controllers.Login)
+	r.POST("/api/auth/login", controller.Login)
 
 	protected := r.Group("/api")
 	protected.Use(middleware.AuthMiddleware())
 
-	protected.GET("/products", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "This is protected products route"})
-	})
+	productController := controller.ProductController{DB: config.DB}
+	protected.GET("/products", productController.GetProducts)
+	protected.POST("/products", productController.CreateProduct)
+	protected.PUT("/products/:id", productController.UpdateProduct)
 
-	protected.GET("/locations", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "This is protected locations route"})
-	})
+	locationController := controller.LocationController{DB: config.DB}
+	protected.GET("/locations", locationController.GetLocations)
+	protected.POST("/locations", locationController.CreateLocation)
 
-	protected.GET("/stock-movements", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "This is protected stock movements route"})
-	})
+	stockController := controller.StockController{DB: config.DB}
+	protected.GET("/stock-movements", stockController.GetStockMovements)
+	protected.POST("/stock-movements", stockController.CreateStockMovement)
 
 	return r
 }

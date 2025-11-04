@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"warehousemanagement/config"
-	model "warehousemanagement/models"
+	model "warehousemanagement/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -47,7 +47,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Generate JWT
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": user.ID,
 	})
