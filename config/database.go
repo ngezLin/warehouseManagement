@@ -12,22 +12,28 @@ import (
 var DB *sql.DB
 
 func ConnectDB() {
-    dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s",
-        os.Getenv("DB_USER"),
-        os.Getenv("DB_PASS"),
-        os.Getenv("DB_HOST"),
-        os.Getenv("DB_NAME"),
-    )
+	host := os.Getenv("DB_HOST")
+	if host == "localhost" {
+		host = "db"
+	}
 
-    db, err := sql.Open("mysql", dsn)
-    if err != nil {
-        log.Fatal("DB connection error:", err)
-    }
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASS"),
+		host,
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	)
 
-    if err := db.Ping(); err != nil {
-        log.Fatal("DB ping error:", err)
-    }
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal("DB connection error:", err)
+	}
 
-    DB = db
-    fmt.Println("DB Connected")
+	if err := db.Ping(); err != nil {
+		log.Fatal("DB ping error:", err)
+	}
+
+	DB = db
+	fmt.Println("DB Connected")
 }
